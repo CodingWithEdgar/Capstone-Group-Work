@@ -1,6 +1,95 @@
 import './App.css';
 import React from 'react';
 
+class AudioTrack extends React.Component{
+
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      audioUrl: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/858/outfoxing.mp3',
+      volume: 0,
+      pan:0,
+      AudioContext: null
+    }
+  }
+
+    componentDidMount() {
+      const url = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/858/outfoxing.mp3';
+
+      this.state.AudioContext = new (window.AudioContext || window.webkitAudioContext)();
+      this.audioCtx = new AudioContext();
+      this.audioElement = new Audio(url);
+      this.track = this.audioCtx.createMediaElementSource(this.audioElement);
+      this.track.connect(this.audioCtx.destination);
+
+      this.gainNode = this.audioCtx.createGain();
+      this.gainNode.connect(this.audioCtx.destination);
+
+      this.panner = new StereoPannerNode(this.audioCtx, {pan: 0});
+      this.panner.connect(this.audioCtx.destination);
+
+      this.gainNode.gain.value =  0.5;
+
+    }
+
+
+  updatePlay() {
+    //this.audioCtx.resume();
+    this.state.AudioContext.resume();
+
+    //;
+  }
+
+
+
+
+    updateVolume(vol) {
+      this.gainNode.gain.value = vol;
+    }
+
+    updatePan(pan) {
+      this.panner.pan.value = pan;
+
+    }
+    /**
+    updateSound(URL) {
+      const context = new AudioContext();
+      let trackBuffer;
+      let audioBuffer;
+      const playButton = true;
+
+      window.fetch(URL)
+        .then(response => response.arrayBuffer())
+        .then(arrayBuffer => context.decodeAudioData(arrayBuffer))
+        .then(audioBuffer => {
+          playButton.disabled = false;
+          trackBuffer = audioBuffer;
+        });
+        const source = context.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(context.destination);
+        source.start();
+    }**/
+
+    //this.gainNode.gain.value =  0.5;
+
+
+    // reverb
+    componentWillUnmount() {
+      this.track.disconnect();
+    }
+    //filter
+  }
+
+function dunkyBot() {
+  const url = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/858/outfoxing.mp3';
+
+  //this.audioCtx = new AudioContext();
+  const audioElement = new Audio(url);
+  audioElement.play();
+  //const act = new AudioTrack();
+}
 
 function App() {
   return (
@@ -68,6 +157,10 @@ function App() {
             <button type="button" className="btn btn-primary">
               Reverb
             </button>
+            <button onClick={
+                dunkyBot()
+    }>
+    button </button>
             <button type="button" className="btn btn-success">
               Volume
               <br></br>
